@@ -1,0 +1,21 @@
+{
+	"folders": [
+		{
+			"path": "../../../../../../../.."
+		},
+		{
+			"path": "../../../../../../../../../ordersservice"
+		},
+		{
+			"path": "../../../../../../../../../core"
+		},
+		{
+			"path": "../../../../../../../../../ApiGateway"
+		}
+	],
+	"settings": {
+		"java.compile.nullAnalysis.mode": "disabled",
+		"java.configuration.updateBuildConfiguration": "automatic",
+		"java.debug.settings.onBuildFailureProceed": true
+	}
+}
