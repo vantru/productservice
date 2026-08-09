@@ -63,10 +63,9 @@ jobs:
       - name: update kubernetes mainfest
         run: |
           FILE=./k8s/productservice-pod.yml
-          yd -i 'spec.template.spec.containers[0].image = "hardingtrutran/productservice:${{ needs.build.outputs.short_sha }}"' "$FILE"
+          yq -i 'spec.template.spec.containers[0].image = "hardingtrutran/productservice:${{ needs.build.outputs.short_sha }}"' "$FILE"
       - name: commit deployment product service file change
         run: |
           git add k8s/productservice-pod.yml
           git commit -m "change tag sha"
           git push origin main
-    
