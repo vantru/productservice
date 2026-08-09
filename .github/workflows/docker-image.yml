@@ -6,10 +6,63 @@ on:
   pull_request:
     branches: [ "main" ]
 
+permissions:
+  contents: write
+
 jobs:
-  estore-product-ci:
+  build:
     runs-on: ubuntu-latest
 
     steps:
     - name: Code checkout
       uses: actions/checkout@v4
+    - name: Set short sha
+      id: vars
+      shell: bash
+      run: echo "short_sha=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+    - name: Render setting.xml
+      env: 
+        GH_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
+      run: envsubst < .github/ci/settings.xml.template > settings.xml
+    
+    - name: docker login
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_USERNAME}}
+        password: ${{ secrets.DOCKER_PASSWORD}}
+    - name: docker build image to dockerhub
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+        secrets: |
+          maven_settings=settings.xml
+        push: true
+        tags: hardingtrutran/productservice:${{ steps.vars.outputs.short_sha }}
+
+    - name: Clean up rendered secret file
+      if: always()
+      run: rm -f settings.xml
+  
+  update-k8s:
+    needs:
+      - build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: install yd
+        uses: mikefarah/yq@v4.44.3
+      - name: update kubernetes mainfest
+        run: |
+          FILE=./k8s/productservice-pod.yml
+          yd -i 'spec.template.spec.containers[0].image = "hardingtrutran/productservice:${{ needs.build.outputs.short_sha }}"' "$FILE"
+      - name: commit deployment product service file change
+        run: |
+          git add k8s/productservice-pod.yml
+          git commit -m "change tag sha"
+          git push origin main
+    
