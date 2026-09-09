@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: productservice
-          image: 'hardingtrutran/productservice:e13209e'
+          image: 'hardingtrutran/productservice:43c7c9d'
           ports:
             - containerPort: 8083
           envFrom:
