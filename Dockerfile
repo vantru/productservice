@@ -6,10 +6,10 @@ WORKDIR /app
 COPY pom.xml .
 #RUN --mount=type=bind,source=.m2-cache,target=/root/.m2 mvn dependency:go-offline -
 COPY src ./src
-COPY settings.xml /root/.m2/settings.xml
+# COPY settings.xml /root/.m2/settings.xml
 
-RUN mvn package -DskipTests 
-# RUN --mount=type=bind,source=.m2-cache,target=/root/.m2 mvn package -DskipTests -o
+# RUN mvn package -DskipTests 
+RUN --mount=type=secret,id=maven_settings,target=/root/.m2/settings.xml mvn clean package -DskipTests
 
 # Stage 2: Run the application
 FROM eclipse-temurin:17-jre
