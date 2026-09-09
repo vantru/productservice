@@ -108,10 +108,8 @@ spring:
       auto-offset-reset: latest
       key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
-
-  
   datasource:
-    url: ${DATABASE_URL}
+    url: ${DATABASE_URL}/productdb
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
     driver-class-name: org.postgresql.Driver
