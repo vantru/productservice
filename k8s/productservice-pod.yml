@@ -21,12 +21,25 @@ spec:
             - containerPort: 8083
           envFrom:
             - configMapRef:
-                name: h2console-cm
+                name: postgres-cm
             - configMapRef:
                 name: axon-cm
           env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: staging
             - name: DATABASE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: h2console-secret
+                  name: postgres-secret
                   key: DATABASE_PASSWORD
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: productservice-svc
+spec:
+  selector:
+    app: productservice
+  ports:
+    - port: 80
+      targetPort: 8083

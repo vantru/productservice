@@ -1,23 +1,4 @@
-server:
-  port: 8083
 
-axon:
-  axonserver:
-    enabled: true
-    component-name: product-service
-    servers: ${AXONSERVER_URL}
-  eventhandling:
-    processors:
-      product-group:
-        mode: tracking
-
-logging:
-  level:
-    org.axonframework.axonserver.connector.event.axon.AxonServerEventStore:  DEBUG
-
-  axoniq:
-    platform:
-      credentials: d67ef6ae-0:bf2aff3b33014c3485a06ee9815ca67f
   # eventhandling:
   #   processors:
   #     product-group:
@@ -51,6 +32,70 @@ logging:
     
 
 spring:
+  application:
+    name: productservice
+  config:
+    activate:
+      on-profile:
+      - development
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      properties:
+        # spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
+        # spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring.json.trusted.packages: com.trutran.estore.core.*
+        # spring.json.value.default.type: com.trutran.estore.core.kafka.ProductReservePubSub
+      group-id: my-first-group
+      auto-offset-reset: latest
+      key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+  
+  datasource:
+    url: jdbc:postgresql://localhost:5432/productdb
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  h2:
+    console:
+      enabled: true
+      settings:
+        web-allow-others: true
+server:
+  port: 8083
+
+axon:
+  axonserver:
+    enabled: true
+    component-name: product-service
+    servers: localhost:8124
+  eventhandling:
+    processors:
+      product-group:
+        mode: tracking
+
+logging:
+  level:
+    org.axonframework.axonserver.connector.event.axon.AxonServerEventStore:  DEBUG
+
+  axoniq:
+    platform:
+      credentials: d67ef6ae-0:bf2aff3b33014c3485a06ee9815ca67f
+---
+
+spring:
+  application:
+    name: productservice
+  config:
+    activate:
+      on-profile:
+      - staging
   kafka:
     bootstrap-servers: localhost:9092
     consumer:
@@ -64,20 +109,40 @@ spring:
       key-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
 
-  application:
-    name: productservice
+  
   datasource:
     url: ${DATABASE_URL}
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
-    driver-class-name: org.h2.Driver
+    driver-class-name: org.postgresql.Driver
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
   h2:
     console:
       enabled: true
       settings:
         web-allow-others: true
+server:
+  port: 8083
 
+axon:
+  axonserver:
+    enabled: true
+    component-name: product-service
+    servers: ${AXONSERVER_URL}
+  eventhandling:
+    processors:
+      product-group:
+        mode: tracking
+
+logging:
+  level:
+    org.axonframework.axonserver.connector.event.axon.AxonServerEventStore:  DEBUG
+
+  axoniq:
+    platform:
+      credentials: d67ef6ae-0:bf2aff3b33014c3485a06ee9815ca67f
