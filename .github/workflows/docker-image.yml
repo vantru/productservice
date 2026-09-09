@@ -17,7 +17,7 @@ jobs:
   call-build:
     uses: vantru/shared-workflows/.github/workflows/docker-build.yml@main
     with:
-      image_name: ordersservice
+      image_name: productsservice
       context: .
     secrets: inherit
     
